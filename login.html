@@ -35,11 +35,7 @@
               rules: [
                 {
                   type   : 'empty',
-                  prompt : 'Please enter your e-mail'
-                },
-                {
-                  type   : 'email',
-                  prompt : 'Please enter a valid e-mail'
+                  prompt : 'Please enter your username'
                 }
               ]
             },
@@ -51,8 +47,8 @@
                   prompt : 'Please enter your password'
                 },
                 {
-                  type   : 'length[8]',
-                  prompt : 'Your password must be at least 8 characters'
+                  type   : 'length[5]',
+                  prompt : 'Your password must be at least 5 characters'
                 }
               ]
             }
@@ -71,7 +67,7 @@
         Log-in
       </div>
     </h2>
-    <form class="ui large form">
+    <div class="ui large form">
       <div class="ui stacked segment">
         <div class="field">
           <div class="ui left icon input">
@@ -85,19 +81,34 @@
             <input type="password" name="password" placeholder="Password">
           </div>
         </div>
-        <div class="ui fluid large teal submit button">Login</div>
+        <button class="ui fluid large teal button" onclick="login()">Login</button>
       </div>
-
-      <div class="ui error message"></div>
-
-    </form>
-
+  </div>
+    <div id="message"></div>
     <div class="ui message">
       New to us? <a href="signup.html">Sign Up</a>
     </div>
   </div>
 </div>
-
 </body>
-
+<script>
+    function login(){
+        var username = $('[name="email"]').val();
+        var password = $('[name="password"]').val();
+        $.post("/api/login",{username:username,password:password},function(result){
+            data = JSON.parse(result);
+            if (data.Message == "success"){
+                window.location="dashboard.html"
+            }else{
+                $("#message").html(`
+                    <div class="ui warning message">
+                        <div class="header">
+                            Password or username invalid
+                        </div>
+                    </div>
+                `);
+            }
+        });
+    }
+</script>
 </html>
