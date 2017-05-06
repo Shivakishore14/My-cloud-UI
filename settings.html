@@ -33,7 +33,7 @@
 <body>
     <div class="ui large top fixed hidden menu">
       <div class="ui container">
-        <a class="active item">Dashboard</a>
+        <a class="active item">Settings</a>
         <div class="right menu">
             <div class="ui inline dropdown">
                 <div class="text">
@@ -43,7 +43,7 @@
                 <i class="dropdown icon"></i>
                 <div class="menu">
                     <div class="item">My Account</div>
-                    <div class="item">Settings</div>
+                    <a href="dashboard.html"><div class="item">Dashboard</div></a>
                     <div class="divider"></div>
                     <div class="item"><i class="sign out icon"></i>Logout</div>
                 </div>
@@ -53,146 +53,35 @@
 </div>
     <div class="margin"></div>
     <div class="ui padded grid" style="overflow-y:auto;overflow-x:auto;">
-        <div class="four wide column">
-            <div class="ui card">
-                <div class="ui items" >
-                    <div class="item" style="margin-top:15px;">
-                        <div class="content">
-                            <div class="ui tiny circular image">
-                                <img src="index.png">
-                            </div>
-                        </div>
-                        <div class="content">
-                            <a class="header">Server Name</a>
-                            <div class="meta">
-                                <span class="date">192.168.1.1</span>
-                            </div>
-                            <div class="description">
-                                Operating System
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-
-                    </div>
-
-                    <div class="item">
-                        <div class="content" style="margin-left:30px;">
-                            <a class="header">Running</a>
-                        </div>
-                        <div class="extra padded content" style="margin-right:20px;">
-                            <a class="ui right floated " href="settings.html"><i class="setting icon" ></i>Settings</a>
-                        </div>
-                    </div>
+            <div class="four wide column">
+                <div class="ui vertical fluid tabular menu">
+                    <a class="active item">
+                        Basic
+                    </a>
+                    <a class="item">
+                        Storage
+                    </a>
+                    <a class="item">
+                        Network
+                    </a>
+                    <a class="item">
+                        Advanced
+                    </a>
                 </div>
             </div>
-        </div><!--first-->
-        <div class="four wide column">
-            <div class="ui card">
-                <div class="ui items" >
-                    <div class="item" style="margin-top:15px;">
-                        <div class="content">
-                            <div class="ui tiny circular image">
-                                <img src="index.png">
-                            </div>
-                        </div>
-                        <div class="content">
-                            <a class="header">Server Name</a>
-                            <div class="meta">
-                                <span class="date">192.168.1.1</span>
-                            </div>
-                            <div class="description">
-                                Operating System
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-
-                    </div>
-
-                    <div class="item">
-                        <div class="content" style="margin-left:30px;">
-                            <a class="header">Running</a>
-                        </div>
-                        <div class="extra padded content" style="margin-right:20px;">
-                            <a class="ui right floated " href="settings.html"><i class="setting icon"></i>Settings</a>
-                        </div>
-                    </div>
+            <div class="twelve wide stretched column">
+                <div class="ui segment">
+                    <button class="ui primary basic button">Freeze</button>
+                    <button class="ui secondary basic button">Change Name</button>
+                    <button class="ui negative basic button">Trun Off</button>
                 </div>
-            </div>
-        </div><!--first-->
-        <div class="four wide column">
-            <div class="ui card">
-                <div class="ui items" >
-                    <div class="item" style="margin-top:15px;">
-                        <div class="content">
-                            <div class="ui tiny circular image">
-                                <img src="index.png">
-                            </div>
-                        </div>
-                        <div class="content">
-                            <a class="header">Server Name</a>
-                            <div class="meta">
-                                <span class="date">192.168.1.1</span>
-                            </div>
-                            <div class="description">
-                                Operating System
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-
-                    </div>
-
-                    <div class="item">
-                        <div class="content" style="margin-left:30px;">
-                            <a class="header">Running</a>
-                        </div>
-                        <div class="extra padded content" style="margin-right:20px;">
-                            <a class="ui right floated " href="settings.html"><i class="setting icon"></i>Settings</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div><!--first-->
-        <div class="four wide column">
-            <div class="ui card">
-                <div class="ui items" >
-                    <div class="item" style="margin-top:15px;">
-                        <div class="content">
-                            <div class="ui tiny circular image">
-                                <img src="index.png">
-                            </div>
-                        </div>
-                        <div class="content">
-                            <a class="header">Server Name</a>
-                            <div class="meta">
-                                <span class="date">192.168.1.1</span>
-                            </div>
-                            <div class="description">
-                                Operating System
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-
-                    </div>
-
-                    <div class="item">
-                        <div class="content" style="margin-left:30px;">
-                            <a class="header">Running</a>
-                        </div>
-                        <div class="extra padded content" style="margin-right:20px;">
-                            <a class="ui right floated " href="settings.html"><i class="setting icon"></i>Settings</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div><first-->
-</div>
+        </div>
+    </div>
     <script type="text/javascript">
-    $('.ui.dropdown')
-  .dropdown();
+    $('.ui.dropdown').dropdown();
+    $(document).ready(function() {
+    $('.ui .vertical .fluid .tabular .menu').menu();
+    });
         var height = $("body").innerHeight();
         var hgt = height*0.10;
         console.log(hgt);
