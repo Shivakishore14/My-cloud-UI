@@ -7,6 +7,7 @@
   <title>SMM</title>
 
   <link rel="stylesheet" href="css/semantic.min.css"></link>
+  <script src="js/cookie.js"></script>
   <style>
   body{
       background-color: teal;
@@ -38,14 +39,14 @@
             <div class="ui inline dropdown">
                 <div class="text">
                     <img class="ui avatar massive image" src="index.png">
-                    Jenny Hess
+                    <span id="username"></span>
                 </div>
                 <i class="dropdown icon"></i>
                 <div class="menu">
                     <div class="item">My Account</div>
-                    <div class="item">Settings</div>
+                    <a class="item" href="settings.html">Settings</a>
                     <div class="divider"></div>
-                    <div class="item"><i class="sign out icon"></i>Logout</div>
+                    <a class="item" href="index.html"><i class="sign out icon"></i>Logout</a>
                 </div>
             </div>
         </div><!--menu-->
@@ -53,149 +54,75 @@
 </div>
     <div class="margin"></div>
     <div class="ui padded grid" style="overflow-y:auto;overflow-x:auto;">
-        <div class="four wide column">
-            <div class="ui card">
-                <div class="ui items" >
-                    <div class="item" style="margin-top:15px;">
-                        <div class="content">
-                            <div class="ui tiny circular image">
-                                <img src="index.png">
-                            </div>
-                        </div>
-                        <div class="content">
-                            <a class="header">Server Name</a>
-                            <div class="meta">
-                                <span class="date">192.168.1.1</span>
-                            </div>
-                            <div class="description">
-                                Operating System
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-
-                    </div>
-
-                    <div class="item">
-                        <div class="content" style="margin-left:30px;">
-                            <a class="header">Running</a>
-                        </div>
-                        <div class="extra padded content" style="margin-right:20px;">
-                            <a class="ui right floated " href="settings.html"><i class="setting icon" ></i>Settings</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div><!--first-->
-        <div class="four wide column">
-            <div class="ui card">
-                <div class="ui items" >
-                    <div class="item" style="margin-top:15px;">
-                        <div class="content">
-                            <div class="ui tiny circular image">
-                                <img src="index.png">
-                            </div>
-                        </div>
-                        <div class="content">
-                            <a class="header">Server Name</a>
-                            <div class="meta">
-                                <span class="date">192.168.1.1</span>
-                            </div>
-                            <div class="description">
-                                Operating System
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-
-                    </div>
-
-                    <div class="item">
-                        <div class="content" style="margin-left:30px;">
-                            <a class="header">Running</a>
-                        </div>
-                        <div class="extra padded content" style="margin-right:20px;">
-                            <a class="ui right floated " href="settings.html"><i class="setting icon"></i>Settings</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div><!--first-->
-        <div class="four wide column">
-            <div class="ui card">
-                <div class="ui items" >
-                    <div class="item" style="margin-top:15px;">
-                        <div class="content">
-                            <div class="ui tiny circular image">
-                                <img src="index.png">
-                            </div>
-                        </div>
-                        <div class="content">
-                            <a class="header">Server Name</a>
-                            <div class="meta">
-                                <span class="date">192.168.1.1</span>
-                            </div>
-                            <div class="description">
-                                Operating System
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-
-                    </div>
-
-                    <div class="item">
-                        <div class="content" style="margin-left:30px;">
-                            <a class="header">Running</a>
-                        </div>
-                        <div class="extra padded content" style="margin-right:20px;">
-                            <a class="ui right floated " href="settings.html"><i class="setting icon"></i>Settings</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div><!--first-->
-        <div class="four wide column">
-            <div class="ui card">
-                <div class="ui items" >
-                    <div class="item" style="margin-top:15px;">
-                        <div class="content">
-                            <div class="ui tiny circular image">
-                                <img src="index.png">
-                            </div>
-                        </div>
-                        <div class="content">
-                            <a class="header">Server Name</a>
-                            <div class="meta">
-                                <span class="date">192.168.1.1</span>
-                            </div>
-                            <div class="description">
-                                Operating System
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-
-                    </div>
-
-                    <div class="item">
-                        <div class="content" style="margin-left:30px;">
-                            <a class="header">Running</a>
-                        </div>
-                        <div class="extra padded content" style="margin-right:20px;">
-                            <a class="ui right floated " href="settings.html"><i class="setting icon"></i>Settings</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div><first-->
-</div>
+        <div class="ui padded grid" id="containers"></div>
+        <button class="ui fluid large inverted button" onclick="go()">create containers</button>
+    </div>
     <script type="text/javascript">
-    $('.ui.dropdown')
-  .dropdown();
+        $('.ui.dropdown').dropdown();
         var height = $("body").innerHeight();
         var hgt = height*0.10;
         console.log(hgt);
         $('.margin').height(hgt);
+    </script>
+    <script>
+
+        $.get("/api/listcontainers",{},function(result){
+            data = JSON.parse(result);
+            if(data.Message == "success"){
+                s = "";
+                list = data.Data;
+                for ( i in list){
+                    status = "Running";
+                    color = "#b8ff07";
+                    if (!list[i].IsRunning){
+                        status = "Not Running";
+                        color = "#ff7c87";
+                        list[i].IPAddress=[];
+                        list[i].IPAddress[0]="";
+                    }
+                    s = s + `
+                    <div class="four wide column">
+                        <div class="ui card">
+                            <div class="ui items" >
+                                <div class="item" style="margin-top:15px;">
+                                    <div class="content">
+                                        <div class="ui tiny image">
+                                            <img src="images\\`+list[i].Template+`.png">
+                                        </div>
+                                    </div>
+                                    <div class="content">
+                                        <a class="header">`+list[i].DisplayName+`</a>
+                                        <div class="meta">
+                                            <span class="date">`+list[i].IPAddress+`</span>
+                                        </div>
+                                        <div class="description">
+                                            `+list[i].Template+`
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="item"></div>
+                                <div class="item" style="background-color:`+color+`;">
+                                    <div class="content" style="margin-left:10px;padding-top:5px;">
+                                        <a class="header">`+status+`</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }
+                $("#containers").html(s);
+            }else{
+                alert("error");
+                console.log(data);
+            }
+        });
+        $(document).ready(function(){
+            user = getCookie("username");
+            $("#username").html(user);
+        });
+        function go(){
+            window.location = "create.html";
+        }
     </script>
 </body>

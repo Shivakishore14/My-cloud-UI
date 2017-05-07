@@ -7,6 +7,7 @@
   <title>SMM</title>
 
   <link rel="stylesheet" href="css/semantic.min.css"></link>
+  <script src="js/cookie.js"></script>
   <style>
   body{
       background-color: teal;
@@ -38,14 +39,14 @@
             <div class="ui inline dropdown">
                 <div class="text">
                     <img class="ui avatar massive image" src="index.png">
-                    Jenny Hess
+                    <span id="username"></span>
                 </div>
                 <i class="dropdown icon"></i>
                 <div class="menu">
                     <div class="item">My Account</div>
                     <a href="dashboard.html"><div class="item">Dashboard</div></a>
                     <div class="divider"></div>
-                    <div class="item"><i class="sign out icon"></i>Logout</div>
+                    <a class="item" href="index.html"><i class="sign out icon"></i>Logout</a>
                 </div>
             </div>
         </div><!--menu-->
@@ -53,38 +54,128 @@
 </div>
     <div class="margin"></div>
     <div class="ui padded grid" style="overflow-y:auto;overflow-x:auto;">
-            <div class="four wide column">
-                <div class="ui vertical fluid tabular menu">
-                    <a class="active item">
+            <div class="sixteen wide stretched column">
+                <div class="ui segment" style="overflow-y:auto;overflow-x:auto;">
+                    <select class="ui dropdown" id="containerSelect">
+                        <option value="">Select Container</option>
+                        <option value="1">Select</option>
+                    </select>
+                    <hr>
+                    <div class="ui fluid accordion">
+                      <div class="active title">
+                        <i class="dropdown icon"></i>
                         Basic
-                    </a>
-                    <a class="item">
-                        Storage
-                    </a>
-                    <a class="item">
-                        Network
-                    </a>
-                    <a class="item">
-                        Advanced
-                    </a>
-                </div>
-            </div>
-            <div class="twelve wide stretched column">
-                <div class="ui segment">
-                    <button class="ui primary basic button">Freeze</button>
-                    <button class="ui secondary basic button">Change Name</button>
-                    <button class="ui negative basic button">Trun Off</button>
+                      </div>
+                      <div class="active content">
+                        <div class="ui container">
+                          <button class="ui large teal button" onclick="start()">Start</button>
+                          <button class="ui large orange button" onclick="shutdown()">Shutdown</button>
+                          <button class="ui large red button" onclick="Destroy()">Destroy</button>
+                        </div>
+                      </div>
+                      <div class="title">
+                        <i class="dropdown icon"></i>
+                        Specifications
+                      </div>
+                      <div class="content">
+                        <div><b>Set New DisplayName :</b></div>
+                        <div class="field">
+                          <div class="ui left icon input">
+                            <input type="text" name="newDisplayName" placeholder="Enter new DisplayName">
+                          </div>
+                          <button class="ui large teal button" onclick="setDisplayname()">Set</button>
+                        </div>
+
+                      </div>
+                      <div class="title">
+                        <i class="dropdown icon"></i>
+                        Stats of container
+                      </div>
+                      <div class="content">
+                          <table class="ui celled table">
+                              <tbody id="tableBody">
+
+                              </tbody>
+                          </table>
+                      </div>
+                    </div>
                 </div>
         </div>
     </div>
     <script type="text/javascript">
-    $('.ui.dropdown').dropdown();
-    $(document).ready(function() {
-    $('.ui .vertical .fluid .tabular .menu').menu();
-    });
+        $('.ui.accordion').accordion();
+        $('.ui.dropdown').dropdown();
+
         var height = $("body").innerHeight();
         var hgt = height*0.10;
         console.log(hgt);
         $('.margin').height(hgt);
+
+        $.get("/api/listcontainers",{},function(result){
+            data = JSON.parse(result);
+            if(data.Message == "success"){
+                s = '<option value="">Select Container</option>';
+                list = data.Data;
+                for ( i in list){
+                    s = s + '<option value="'+list[i].Name+'">'+list[i].DisplayName+'</option>'
+                }
+                $("#containerSelect").html(s);
+            }
+        });
+        function start(){
+            sendReq("start");
+        }
+        function shutdown(){
+            sendReq("stop");
+        }
+        function destroy(){
+            sendReq("destroy");
+        }
+        function sendReq(op){
+            con = $("#containerSelect").val();
+            $.get("/api/chProp/"+con+"/"+op, {}, function(result){
+                data = JSON.parse(result);
+                alert(data.Message);
+            });
+        }
+        function setDisplayname(){
+            var newName=$('[name="newDisplayName"]').val();
+            con = $("#containerSelect").val();
+            $.get("/api/chProp/"+con+"/DisplayName", {newDisplayName:newName}, function(result){
+                data = JSON.parse(result);
+                alert(data.Message);
+            });
+        }
+        $("#containerSelect").change(function(){
+            con = $("#containerSelect").val();
+            $.get("/api/getstats/"+con,{},function(result){
+                data = JSON.parse(result);
+                if(data.Message == "Success"){
+                    data = data.Data;
+                    console.log(data);
+                    s = "";
+                    s = s + '<tr><td>Name</td><td>'+data.Name+'</td></tr>';
+                    s = s + '<tr><td>Running</td><td>'+data.IsRunning+'</td></tr>';
+                    if (data.IsRunning == true){
+                        s = s + '<tr><td>Memory Used</td><td>'+data.MemUsed+'</td></tr>';
+                        s = s + '<tr><td>Memory Limit</td><td>'+data.MemLimit+'</td></tr>';
+                        s = s + '<tr><td>Kernel Memory Used</td><td>'+data.KernelMemUsed+'</td></tr>';
+                        s = s + '<tr><td>Kernel Memory Limit</td><td>'+data.KernelMemLimit+'</td></tr>';
+                        s = s + '<tr><td>Memory Swap Used</td><td>'+data.MemSwapUsed+'</td></tr>';
+                        s = s + '<tr><td>Memory Swap Limit</td><td>'+data.MemSwapLimit+'</td></tr>';
+                        s = s + '<tr><td>Bulk IO usage</td><td>'+data.BulkIOUsage+'</td></tr>';
+                        s = s + '<tr><td>Ip Address</td><td>'+data.IPAddress+'</td></tr>';
+
+                    }
+                    $("#tableBody").html(s);
+                }else{
+                    alert("try again");
+                }
+            });
+        });
+        $(document).ready(function(){
+            user = getCookie("username");
+            $("#username").html(user);
+        });
     </script>
 </body>

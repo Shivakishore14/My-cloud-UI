@@ -1,0 +1,122 @@
+<!DOCTYPE Html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>SMM</title>
+
+  <link rel="stylesheet" href="css/semantic.min.css"></link>
+  <script src="js/cookie.js"></script>
+  <style>
+  body{
+      background-color: teal;
+  }
+  .ui.vertical.menu{
+      height:500px;
+  }
+  .ui.segment{
+      height:500px;
+
+      padding-left:6%;
+  }
+  .ui .card{
+      margin-top:100px;
+      margin-left:15px;
+  }
+
+  </style>
+
+</head>
+<body>
+    <div class="ui large top fixed hidden menu">
+      <div class="ui container">
+        <a class="active item">Settings</a>
+        <div class="right menu">
+            <div class="ui inline dropdown">
+                <div class="text">
+                    <img class="ui avatar massive image" src="index.png">
+                    <span id="username"></span>
+                </div>
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                    <div class="item">My Account</div>
+                    <a href="dashboard.html"><div class="item">Dashboard</div></a>
+                    <div class="divider"></div>
+                    <a class="item" href="index.html"><i class="sign out icon"></i>Logout</a>
+                </div>
+            </div>
+        </div><!--menu-->
+    </div>
+</div>
+    <div class="margin"></div>
+    <div class="ui padded grid" style="overflow-y:auto;overflow-x:auto;">
+        <div class="sixteen wide stretched column">
+            <div class="ui segment form">
+                <div class="field">
+                    <label>Dispay Name</label>
+                    <input name="displayName" placeholder="Display name" type="text">
+                </div>
+                <div class="ui form">
+                    <div class="field">
+                        <label>Operating system</label>
+                        <select class="ui search dropdown" name="template">
+                            <option value="">Select OS</option>
+                            <option value="ubuntu">ubuntu</option>
+                            <option value="debian">debian</option>
+                            <option value="fedora">fedora</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Size</label>
+                    <input name="size" placeholder="Size in Mb (eg : 2018M )" type="text">
+                </div>
+                <div class="field">
+                    <label>UserName (Container Login)</label>
+                    <input name="username" placeholder="UserName for container" type="text">
+                </div>
+                <div class="field">
+                    <label>Container Password</label>
+                    <input name="password" placeholder="Password" type="text">
+                </div>
+
+                <button class="ui fluid large teal button" onclick="create()">Create</button>
+            </div>
+        </div>
+    </div>
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/semantic.min.js"></script>
+    <script type="text/javascript">
+        $('.ui.dropdown').dropdown();
+        $(document).ready(function() {
+        //    $('.ui .vertical .fluid .tabular .menu').menu();
+        });
+        var height = $("body").innerHeight();
+        var hgt = height*0.10;
+        console.log(hgt);
+        $('.margin').height(hgt);
+
+        function create(){
+            username = $('[name="username"]').val();
+            password = $('[name="password"]').val();
+            template = $('[name="template"]').val();
+            size = $('[name="size"]').val();
+            displayName = $('[name="displayName"]').val();
+            obj = {displayName:displayName,template:template,size:size,username:username,password:password};
+            console.log(obj);
+            $.post("/api/createcontainer",obj,function(result){
+                data = JSON.parse(result);
+                if(data.Message != "started"){
+                    alert("check details");
+                }else{
+                    window.location="dashboard.html";
+                }
+            });
+        }
+        $(document).ready(function(){
+            user = getCookie("username");
+            $("#username").html(user);
+        });
+    </script>
+</body>
